@@ -22,4 +22,56 @@
 		<img id="front-splash" src="{{ url_for('static',filename='img/front-splash.jpg') }}" alt="Front Photo of Musical Band" />
 	</div>
 </div>
+
+
+
+<!-- <div class="row shows"> -->
+
+	<div class="upcoming-shows" style=" height: max-content; margin-bottom: 20px;">
+
+		{% if shows %} <h2 style="color: rgb(252, 181, 49); margin-bottom: 17px; ">Upcoming Shows Alert</h2> {% endif %}
+
+		<div style="display: flex; gap: 3%; height: max-content;">
+			{%for show in shows %}
+			<div style="width: 30%;">
+				<div style="margin: 0; height: fit-content;" class="tile tile-show">
+						<img src="{{ show.artist_image_link }}" alt="Artist Image" />
+						<h4>{{ show.start_time|datetime('full') }}</h4>
+						<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
+						<p>playing at</p>
+						<h5><a href="/venues/{{ show.venue_id }}">{{ show.venue_name }}</a></h5>
+				</div>
+			</div>
+		{% endfor %}
+		</div>
+			
+	</div>
+	
+
+	<div class="recent-venues" style="display: block; margin: 20px 0; border: 2px;">
+		{% if areas %} <h2 style="color: rgb(252, 181, 49); margin-bottom: 17px;">See Recently Listed Venues</h2> {% endif %}
+
+		{% for area in areas %}
+		<h3>{{ area.city }}, {{ area.state }}</h3>
+			<ul class="items">
+				{% for venue in area.venues %}
+				<li>
+					<a href="/venues/{{ venue.id }}">
+						<i class="fas fa-music"></i>
+						<div class="item">
+							<h5>{{ venue.name }}</h5>
+						</div>
+					</a>
+				</li>
+				{% endfor %}
+			</ul>
+		{% endfor %}
+
+	</div>
+
+
+
+	
+
+</div>
 {% endblock %}

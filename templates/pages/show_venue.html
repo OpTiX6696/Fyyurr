@@ -1,10 +1,25 @@
 {% extends 'layouts/main.html' %}
 {% block title %}Venue Search{% endblock %}
 {% block content %}
+<style>
+	.deleteBtn {
+		font-size: 52%; 
+		display: flex; 
+		margin: 5px 0 0;
+		-webkit-appearance: none;
+		border: 1px solid rgb(245, 38, 38);
+		padding: 5px;
+		border-radius: 5px;
+		background-color: white;
+		color: rgb(241, 98, 98);
+		font-weight: 500;
+	}
+</style>
 <div class="row">
 	<div class="col-sm-6">
 		<h1 class="monospace">
 			{{ venue.name }}
+			<button class="deleteBtn" data-id="{{ venue.id }}" ">Delete {{ venue.name }}</button>
 		</h1>
 		<p class="subtitle">
 			ID: {{ venue.id }}
@@ -77,5 +92,39 @@
 
 <a href="/venues/{{ venue.id }}/edit"><button class="btn btn-primary btn-lg">Edit</button></a>
 
+<script>
+
+	const delete_btn = document.querySelector('.deleteBtn');	
+	delete_btn.onclick = (e) => {
+		const venue_id = e.target.dataset['id']
+		// console.log('ID', venue_id);
+		fetch('/venues/' + venue_id, {
+			method: 'DELETE'
+		})
+		.then(res => {
+			console.log('Success');
+			e.path[3].remove()
+			window.location = '/venues'
+		})
+	}
+
+</script>
+
 {% endblock %}
+
+<!-- <script>
+
+	const delete_btns = document.querySelectorAll('.deleteBtn');
+	delete_btns.forEach(e => {
+		console.log(e);
+		const venue_id = e.target.dataset.id
+		fetch('/venues/' + venue_id, {
+			method: 'DELETE'
+		})
+		.then(res => {
+
+		})
+	});
+
+</script> -->
 
