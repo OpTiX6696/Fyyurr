@@ -1,9 +1,3 @@
- # cities=Venue.query.with_entities(Venue.city).group_by(Venue.city).all() all_data = [] print(cities) for city in cities: print(city) venues = Venue.query.filter_by(city=city[0]).all() city_venue = [] for venue in venues: 
- # 
- # 
- # shows = db.session.query(Show).join(Venue).filter(Show.venue_id==venue.id).filter(Show.start_time>datetime.now()).all() each_venue = {"id":venue.id, "name":venue.name, "num_upcoming_shows":len(shows)} city_venue.append(each_venue) data = {"city":city[0], "state":venues[0].state, "venues":city_venue} all_data.append(data) return render_template('pages/venues.html', areas = all_data) 
-
-
 #----------------------------------------------------------------------------#
 # Imports
 #----------------------------------------------------------------------------#
@@ -22,6 +16,8 @@ from forms import *
 import sys
 
 from flask_migrate import Migrate
+
+from models import Venue, Artist, Show
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -35,62 +31,62 @@ migrate = Migrate(app, db)
 
 # TODO: connect to a local postgresql database
 
-#----------------------------------------------------------------------------#
-# Models.
-#----------------------------------------------------------------------------#
+# #----------------------------------------------------------------------------#
+# # Models.
+# #----------------------------------------------------------------------------#
 
-class Venue(db.Model):
-    __tablename__ = 'venue'
+# class Venue(db.Model):
+#     __tablename__ = 'venue'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(), nullable = False)
-    city = db.Column(db.String(120), nullable = False)
-    state = db.Column(db.String(120), nullable = False)
-    address = db.Column(db.String(120), nullable = False)
-    phone = db.Column(db.String(120), nullable = False)
-    genres = db.Column(db.String(), nullable = False)
-    website_link = db.Column(db.String(), nullable = True)
-    image_link = db.Column(db.String(500), nullable = False)
-    facebook_link = db.Column(db.String(120), nullable = True)
-    seeking_talent = db.Column(db.Boolean, default = False)    
-    description = db.Column(db.String(), nullable = True)
-    show = db.relationship('Show', passive_deletes=True, backref = 'venue', lazy = True)
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(), nullable = False)
+#     city = db.Column(db.String(120), nullable = False)
+#     state = db.Column(db.String(120), nullable = False)
+#     address = db.Column(db.String(120), nullable = False)
+#     phone = db.Column(db.String(120), nullable = False)
+#     genres = db.Column(db.String(), nullable = False)
+#     website_link = db.Column(db.String(), nullable = True)
+#     image_link = db.Column(db.String(500), nullable = False)
+#     facebook_link = db.Column(db.String(120), nullable = True)
+#     seeking_talent = db.Column(db.Boolean, default = False)    
+#     description = db.Column(db.String(), nullable = True)
+#     show = db.relationship('Show', passive_deletes=True, backref = 'venue', lazy = True)
     
-    def __repr__(self):
-      return f'<Venue {self.id} {self.name} {self.city} {self.state} {self.address} {self.phone} {self.genres} {self.website_link} {self.image_link} {self.facebook_link} {self.seeking_talent} {self.description}>'
+#     def __repr__(self):
+#       return f'<Venue {self.id} {self.name} {self.city} {self.state} {self.address} {self.phone} {self.genres} {self.website_link} {self.image_link} {self.facebook_link} {self.seeking_talent} {self.description}>'
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+#     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
-class Artist(db.Model):
-    __tablename__ = 'artist'
+# class Artist(db.Model):
+#     __tablename__ = 'artist'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(), nullable = False)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120), nullable = False)
-    genres = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    website_link = db.Column(db.String(), nullable = False)
-    looking_for_venues = db.Column(db.Boolean, nullable = False, default = False)        
-    description = db.Column(db.String(), nullable = True)
-    show = db.relationship('Show', passive_deletes=True, backref = 'artist', lazy = True)
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(), nullable = False)
+#     city = db.Column(db.String(120))
+#     state = db.Column(db.String(120))
+#     phone = db.Column(db.String(120), nullable = False)
+#     genres = db.Column(db.String(120))
+#     image_link = db.Column(db.String(500))
+#     facebook_link = db.Column(db.String(120))
+#     website_link = db.Column(db.String(), nullable = False)
+#     looking_for_venues = db.Column(db.Boolean, nullable = False, default = False)        
+#     description = db.Column(db.String(), nullable = True)
+#     show = db.relationship('Show', passive_deletes=True, backref = 'artist', lazy = True)
     
-    def __repr__(self):
-      return f'<Artist {self.id} {self.name} {self.city} {self.state} {self.phone} {self.genres} {self.website_link} {self.image_link} {self.facebook_link} {self.looking_for_venues} {self.description}>'
+#     def __repr__(self):
+#       return f'<Artist {self.id} {self.name} {self.city} {self.state} {self.phone} {self.genres} {self.website_link} {self.image_link} {self.facebook_link} {self.looking_for_venues} {self.description}>'
     
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+#     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     
-class Show(db.Model):
-  __tablename__ = 'show'
+# class Show(db.Model):
+#   __tablename__ = 'show'
   
-  id = db.Column(db.Integer, primary_key = True, nullable = False)
-  venue_id = db.Column(db.Integer, db.ForeignKey('venue.id', ondelete='CASCADE'), nullable = False)
-  artist_id = db.Column(db.Integer, db.ForeignKey('artist.id', ondelete='CASCADE'), nullable = False)
-  start_time = db.Column(db.DateTime(), nullable = False)
+#   id = db.Column(db.Integer, primary_key = True, nullable = False)
+#   venue_id = db.Column(db.Integer, db.ForeignKey('venue.id', ondelete='CASCADE'), nullable = False)
+#   artist_id = db.Column(db.Integer, db.ForeignKey('artist.id', ondelete='CASCADE'), nullable = False)
+#   start_time = db.Column(db.DateTime(), nullable = False)
   
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+# # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 
 
