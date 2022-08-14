@@ -14,13 +14,7 @@ from forms import *
 import sys
 from flask_migrate import Migrate
 import re
-# from wtforms.validators import StopValidation
 from wtforms.validators import ValidationError
-
-
-
-from flask_migrate import Migrate
-
 from models import Venue, Artist, Show, app, db
 #----------------------------------------------------------------------------#
 # App Config.
@@ -31,7 +25,7 @@ from models import Venue, Artist, Show, app, db
 # app.config.from_object('config')
 # db = SQLAlchemy(app)
 
-migrate = Migrate(app, db)
+# migrate = Migrate(app, db)
 
 # TODO: connect to a local postgresql database
 

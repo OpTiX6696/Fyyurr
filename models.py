@@ -1,4 +1,5 @@
 
+from enum import unique
 from flask import Flask
 
 from flask_sqlalchemy import SQLAlchemy
@@ -13,7 +14,7 @@ app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
-# migrate = Migrate(app, db)#----------------------------------------------------------------------------#
+migrate = Migrate(app, db)#----------------------------------------------------------------------------#
 # Models.
 #----------------------------------------------------------------------------#
 
@@ -25,12 +26,12 @@ class Venue(db.Model):
     city = db.Column(db.String(120), nullable = False)
     state = db.Column(db.String(120), nullable = False)
     address = db.Column(db.String(120), nullable = False)
-    phone = db.Column(db.String(120), nullable = False)
+    phone = db.Column(db.String(120), nullable = False, unique = True)
     genres = db.Column(db.String(), nullable = False)
     website_link = db.Column(db.String(), nullable = True)
     image_link = db.Column(db.String(500), nullable = False)
     facebook_link = db.Column(db.String(120), nullable = True)
-    seeking_talent = db.Column(db.Boolean, default = False)    
+    seeking_talent = db.Column(db.Boolean, default = False, nullable = False)    
     description = db.Column(db.String(), nullable = True)
     show = db.relationship('Show', passive_deletes=True, backref = 'venue', lazy = True)
     
@@ -44,13 +45,13 @@ class Artist(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(), nullable = False)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120), nullable = False)
-    genres = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    website_link = db.Column(db.String(), nullable = False)
+    city = db.Column(db.String(120), nullable = False)
+    state = db.Column(db.String(120), nullable = False)
+    phone = db.Column(db.String(120), nullable = False, unique = True)
+    genres = db.Column(db.String(120), nullable = False)
+    image_link = db.Column(db.String(500), nullable = False)
+    facebook_link = db.Column(db.String(120), nullable = True)
+    website_link = db.Column(db.String(), nullable = True)
     looking_for_venues = db.Column(db.Boolean, nullable = False, default = False)        
     description = db.Column(db.String(), nullable = True)
     show = db.relationship('Show', passive_deletes=True, backref = 'artist', lazy = True)
