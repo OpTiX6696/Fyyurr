@@ -56,7 +56,7 @@ app.jinja_env.filters['datetime'] = format_datetime
 
 @app.route('/')
 def index():
-  recent_shows = Show.query.join(Artist).join(Venue).filter(Show.artist_id == Artist.id).filter(Show.venue_id == Venue.id).filter(Show.start_time > datetime.now()).with_entities(Venue.id, Venue.name, Artist.id, Artist.name, Artist.image_link, Show.start_time).order_by(Show.id.desc()).limit(10).all()
+  recent_shows = db.session.query(Show).join(Artist).join(Venue).filter(Show.artist_id == Artist.id).filter(Show.venue_id == Venue.id).filter(Show.start_time > datetime.now()).with_entities(Venue.id, Venue.name, Artist.id, Artist.name, Artist.image_link, Show.start_time).order_by(Show.id.desc()).limit(10).all()
   
   upcoming_shows_data = []
   
@@ -111,7 +111,7 @@ def venues():
     ven_in_same_city_state = Venue.query.filter(Venue.state == venue.state, Venue.city == venue.city).all()
     
     for each in ven_in_same_city_state:
-      num_of_upcoming_shows = Show.query.join(Venue).filter(Show.venue_id == Venue.id).filter(Show.start_time > datetime.now()).count()
+      num_of_upcoming_shows = db.session.query(Show).join(Venue).filter(Show.venue_id == Venue.id).filter(Show.start_time > datetime.now()).count()
       d_venues.append(
         {
           'id': each.id,
@@ -165,9 +165,9 @@ def show_venue(venue_id):
   # TODO: replace with real venue data from the venues table, using venue_id
   
   venue = Venue.query.get(venue_id)
-  p_shows = Venue.query.join(Show).filter(Venue.id == Show.venue_id).with_entities(Show.artist_id, Show.start_time).filter(Show.start_time < datetime.now()).all()
+  p_shows = db.session.query(Venue).join(Show).filter(Venue.id == Show.venue_id).with_entities(Show.artist_id, Show.start_time).filter(Show.start_time < datetime.now()).all()
   
-  upc_shows = Venue.query.join(Show).filter(Venue.id == Show.venue_id).with_entities(Show.artist_id, Show.start_time).filter(Show.start_time > datetime.now()).all()
+  upc_shows = db.session.query(Venue).join(Show).filter(Venue.id == Show.venue_id).with_entities(Show.artist_id, Show.start_time).filter(Show.start_time > datetime.now()).all()
   
   upcoming_shows = []
   for each in upc_shows:
@@ -313,7 +313,7 @@ def search_artists():
   data = []
   
   for each in search_result:
-    num_of_upc_shows = Artist.query.join(Show).filter(Artist.id == Show.artist_id).filter(Show.start_time > datetime.now()).count()
+    num_of_upc_shows = db.session.query(Artist).join(Show).filter(Artist.id == Show.artist_id).filter(Show.start_time > datetime.now()).count()
     d = {}
     d['id'] = each.id
     d['name'] = each.name
@@ -333,9 +333,9 @@ def show_artist(artist_id):
   
   artist = Artist.query.get(artist_id)
   
-  p_shows = Artist.query.join(Show).filter(Artist.id == Show.artist_id).with_entities(Show.venue_id, Show.start_time).filter(Show.start_time < datetime.now()).all()
+  p_shows = db.session.query(Artist).join(Show).filter(Artist.id == Show.artist_id).with_entities(Show.venue_id, Show.start_time).filter(Show.start_time < datetime.now()).all()
   
-  upc_shows = Artist.query.join(Show).filter(Artist.id == Show.artist_id).with_entities(Show.venue_id, Show.start_time).filter(Show.start_time > datetime.now()).all()
+  upc_shows = db.session.query(Artist).join(Show).filter(Artist.id == Show.artist_id).with_entities(Show.venue_id, Show.start_time).filter(Show.start_time > datetime.now()).all()
   
   upcoming_shows = []
   for each in upc_shows:
@@ -552,7 +552,7 @@ def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
   
-  shows = Show.query.join(Artist).join(Venue).filter(Show.artist_id == Artist.id).filter(Show.venue_id == Venue.id).with_entities(Venue.id, Venue.name, Artist.id, Artist.name, Artist.image_link, Show.start_time).all()
+  shows = db.session.query(Show).join(Artist).join(Venue).filter(Show.artist_id == Artist.id).filter(Show.venue_id == Venue.id).with_entities(Venue.id, Venue.name, Artist.id, Artist.name, Artist.image_link, Show.start_time).all()
   
   data = []
   
