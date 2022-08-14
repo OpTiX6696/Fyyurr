@@ -11,8 +11,8 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
-import sys
-from flask_migrate import Migrate
+# import sys
+# from flask_migrate import Migrate
 import re
 from wtforms.validators import ValidationError
 from models import Venue, Artist, Show, app, db
@@ -390,10 +390,11 @@ def show_artist(artist_id):
 def edit_artist(artist_id):
   form = ArtistForm()
   
+  # validatePhoneNumber(form)
   artist = Artist.query.get(artist_id)  
-  artist_id = artist.id
+  # artist_id = artist.id
   form.name.data = artist.name
-  form.genres.data = ','.join(artist.genres)
+  form.genres.data = artist.genres
   form.city.data = artist.city
   form.state.data = artist.state
   form.phone.data = artist.phone
@@ -449,7 +450,7 @@ def edit_venue(venue_id):
   
   venue = Venue.query.get(venue_id)
   
-  
+  venue_id = venue.id
   form.name.data = venue.name
   form.genres.data = venue.genres
   form.city.data = venue.city
@@ -473,6 +474,7 @@ def edit_venue_submission(venue_id):
     form = VenueForm(request.form)
     validatePhoneNumber(form)
     venue = Venue.query.get(venue_id)
+    
     venue.name = form.name.data
     venue.genres = ", ".join(request.form.getlist('genres'))
     venue.city = form.city.data
